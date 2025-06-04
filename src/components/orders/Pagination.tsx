@@ -1,7 +1,6 @@
-import { memo, useMemo, useCallback } from "react";
+import { memo, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { usePaginationRange } from "@/hooks/usePaginationRange";
 
 interface PaginationProps {
   currentPage: number;
@@ -20,10 +19,38 @@ export const Pagination = memo<PaginationProps>(({
   onPageChange,
   className = ""
 }) => {
-  const { visiblePages } = usePaginationRange({
-    currentPage,
-    totalPages,
-  });
+  const visiblePages = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const pages: (number | string)[] = [];
+
+    pages.push(1);
+
+    if (currentPage > 3) {
+      pages.push('...');
+    }
+
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+
+    for (let i = start; i <= end; i++) {
+      if (!pages.includes(i)) {
+        pages.push(i);
+      }
+    }
+
+    if (currentPage < totalPages - 2) {
+      pages.push('...');
+    }
+
+    if (!pages.includes(totalPages)) {
+      pages.push(totalPages);
+    }
+
+    return pages;
+  }, [currentPage, totalPages]);
 
   const paginationInfo = useMemo(() => {
     const startItem = totalItems > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
@@ -34,21 +61,21 @@ export const Pagination = memo<PaginationProps>(({
     return { startItem, endItem, hasPrevious, hasNext };
   }, [currentPage, totalItems, itemsPerPage, totalPages]);
 
-  const handlePrevious = useCallback(() => {
+  const handlePrevious = () => {
     if (paginationInfo.hasPrevious) {
       onPageChange(currentPage - 1);
     }
-  }, [currentPage, paginationInfo.hasPrevious, onPageChange]);
+  };
 
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     if (paginationInfo.hasNext) {
       onPageChange(currentPage + 1);
     }
-  }, [currentPage, paginationInfo.hasNext, onPageChange]);
+  };
 
-  const handlePageClick = useCallback((page: number) => {
+  const handlePageClick = (page: number) => {
     onPageChange(page);
-  }, [onPageChange]);
+  };
 
   if (totalPages <= 1) return null;
 

@@ -1,9 +1,10 @@
-import { memo, useCallback } from 'react';
+import { memo } from 'react';
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown, Loader2 } from "lucide-react";
 import { ORDER_STATUS_OPTIONS } from "@/types/order";
-import { useOrderStatusUpdate } from "@/hooks/useOrderStatusUpdate";
+import { useStatusUpdate } from "@/hooks/useStatusUpdate";
+import { useToast } from "@/hooks/use-toast";
 import type { Order, OrderStatus } from "@/types/order";
 
 interface OrderStatusUpdateDropdownProps {
@@ -17,17 +18,26 @@ export const OrderStatusUpdateDropdown = memo<OrderStatusUpdateDropdownProps>(({
   disabled = false,
   className = ""
 }) => {
-  const { updateStatus, isUpdating } = useOrderStatusUpdate();
+  const { updateStatus, isUpdating } = useStatusUpdate();
+  const { toast } = useToast();
 
-  const handleStatusUpdate = useCallback(async (newStatus: OrderStatus) => {
+  const handleStatusUpdate = async (newStatus: OrderStatus) => {
     if (newStatus === order.status) return;
 
     try {
       await updateStatus(order.id, newStatus, order);
-    } catch (error) {
-      console.error('Failed to update order status:', error);
+      toast({
+        title: "Success!",
+        description: "Order status updated successfully.",
+      });
+    } catch {
+      toast({
+        title: "Error!",
+        description: "Failed to update order status. Please try again.",
+        variant: "destructive",
+      });
     }
-  }, [order, updateStatus]);
+  };
 
   return (
     <DropdownMenu>

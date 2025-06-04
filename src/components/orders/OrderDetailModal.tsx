@@ -1,11 +1,13 @@
-import { memo, useCallback } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { ORDER_STATUS_OPTIONS } from "@/types/order";
 import { StatusBadge } from "./StatusBadge";
-import { useOrderDetail } from "@/hooks/useOrderDetail";
+import { useOrderQuery } from "@/hooks/useOrderQuery";
+import { useStatusUpdate } from "@/hooks/useStatusUpdate";
+import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import type { OrderStatus } from "@/types/order";
 
@@ -15,39 +17,46 @@ interface OrderDetailModalProps {
   onClose: () => void;
 }
 
-export const OrderDetailModal = memo<OrderDetailModalProps>(({
+export function OrderDetailModal({
   orderId,
   isOpen,
   onClose
-}) => {
-  const {
-    order,
-    loading,
-    error,
-    newStatus,
-    setNewStatus,
-    updateStatus,
-    isUpdating,
-    hasOrder,
-    canUpdateStatus,
-  } = useOrderDetail({ orderId });
+}: OrderDetailModalProps) {
+  const { order, loading, error, hasOrder } = useOrderQuery({ orderId });
+  const { updateStatus, isUpdating } = useStatusUpdate();
+  const [newStatus, setNewStatus] = useState<OrderStatus | ''>('');
+  const { toast } = useToast();
 
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     setNewStatus('');
     onClose();
-  }, [setNewStatus, onClose]);
+  };
 
-  const handleUpdateStatus = useCallback(async () => {
-    try {
-      await updateStatus();
-    } catch (error) {
-      console.error('Status update failed:', error);
+  const handleUpdateStatus = async () => {
+    if (!orderId || !newStatus || !order) return;
+
+    if (newStatus === order.status) {
+      setNewStatus('');
+      return;
     }
-  }, [updateStatus]);
 
-  const handleStatusChange = useCallback((value: string) => {
-    setNewStatus(value as OrderStatus);
-  }, [setNewStatus]);
+    try {
+      await updateStatus(orderId, newStatus, order);
+      setNewStatus('');
+      toast({
+        title: "Success!",
+        description: "Order status updated successfully.",
+      });
+    } catch {
+      toast({
+        title: "Error!",
+        description: "Failed to update order status. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const canUpdateStatus = !!(newStatus && newStatus !== order?.status && !isUpdating);
 
   if (!isOpen) return null;
 
@@ -158,7 +167,7 @@ export const OrderDetailModal = memo<OrderDetailModalProps>(({
               <div className="flex items-center space-x-3">
                 <Select
                   value={newStatus}
-                  onValueChange={handleStatusChange}
+                  onValueChange={(value) => setNewStatus(value as OrderStatus)}
                   disabled={isUpdating}
                 >
                   <SelectTrigger className="flex-1">
@@ -200,6 +209,4 @@ export const OrderDetailModal = memo<OrderDetailModalProps>(({
       </DialogContent>
     </Dialog>
   );
-});
-
-OrderDetailModal.displayName = 'OrderDetailModal';
+}
