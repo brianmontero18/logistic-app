@@ -105,17 +105,13 @@ const setupGraphQLInterceptor = () => {
 }
 
 export const startMSW = async (): Promise<void> => {
-  if (import.meta.env.DEV) {
-    console.log('🚀 [INTERCEPTOR] Starting custom GraphQL interceptor (MSW bypass)...')
-    setupGraphQLInterceptor()
-    console.log('✅ [INTERCEPTOR] GraphQL interception active!')
-  }
+  console.log('🚀 [INTERCEPTOR] Starting custom GraphQL interceptor (MSW bypass)...')
+  setupGraphQLInterceptor()
+  console.log('✅ [INTERCEPTOR] GraphQL interception active!')
 }
 
 export const stopMSW = async (): Promise<void> => {
-  if (import.meta.env.DEV) {
-    console.log('🛑 [INTERCEPTOR] Custom interceptor cannot be stopped (refresh page)')
-  }
+  console.log('🛑 [INTERCEPTOR] Custom interceptor cannot be stopped (refresh page)')
 }
 
 // Dummy exports for compatibility
