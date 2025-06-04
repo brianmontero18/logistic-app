@@ -61,13 +61,13 @@ export const OrderStatusUpdateDropdown = memo<OrderStatusUpdateDropdownProps>(({
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg z-50">
         {ORDER_STATUS_OPTIONS.map((option) => (
           <DropdownMenuItem
             key={option.value}
             onClick={() => handleStatusUpdate(option.value as OrderStatus)}
             disabled={option.value === order.status || isUpdating}
-            className={option.value === order.status ? "opacity-50" : ""}
+            className={`${option.value === order.status ? "opacity-50" : ""} hover:bg-gray-50`}
           >
             {option.label}
             {option.value === order.status && (

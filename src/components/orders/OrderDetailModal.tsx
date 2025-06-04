@@ -84,7 +84,7 @@ export function OrderDetailModal({
 
         {loading && (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         )}
 
@@ -173,12 +173,13 @@ export function OrderDetailModal({
                   <SelectTrigger className="flex-1">
                     <SelectValue placeholder="Select new status" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
                     {ORDER_STATUS_OPTIONS.map((option) => (
                       <SelectItem
                         key={option.value}
                         value={option.value}
                         disabled={option.value === order.status}
+                        className="hover:bg-gray-50"
                       >
                         {option.label}
                         {option.value === order.status && (
@@ -191,7 +192,7 @@ export function OrderDetailModal({
                 <Button
                   onClick={handleUpdateStatus}
                   disabled={!canUpdateStatus}
-                  className="bg-primary-600 hover:bg-primary-700"
+                  className="bg-primary hover:bg-primary/90"
                 >
                   {isUpdating ? (
                     <>

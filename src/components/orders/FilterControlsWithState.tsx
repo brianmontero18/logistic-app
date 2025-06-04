@@ -134,10 +134,10 @@ export function FilterControlsWithState({
             <SelectTrigger>
               <SelectValue placeholder="All Providers" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Providers</SelectItem>
+            <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+              <SelectItem value="all" className="hover:bg-gray-50">All Providers</SelectItem>
               {providerOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem key={option.value} value={option.value} className="hover:bg-gray-50">
                   {option.label}
                 </SelectItem>
               ))}
@@ -157,10 +157,10 @@ export function FilterControlsWithState({
             <SelectTrigger>
               <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
+            <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+              <SelectItem value="all" className="hover:bg-gray-50">All Statuses</SelectItem>
               {statusOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem key={option.value} value={option.value} className="hover:bg-gray-50">
                   {option.label}
                 </SelectItem>
               ))}

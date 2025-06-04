@@ -151,7 +151,7 @@ export function OrderTable({
                         variant="ghost"
                         size="sm"
                         onClick={(e) => handleViewClick(e, order.id)}
-                        className="text-primary-600 hover:text-primary-900"
+                        className="text-primary hover:text-primary/80"
                         aria-label={`View order ${order.reference}`}
                       >
                         <Eye className="h-4 w-4" />
